@@ -40,6 +40,7 @@ type MyCrdReconciler struct {
 //+kubebuilder:rbac:groups=mygroup.my.domain,resources=mycrds,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=mygroup.my.domain,resources=mycrds/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=mygroup.my.domain,resources=mycrds/finalizers,verbs=update
+//+kubebuilder:rbac:groups="",resources=pods,verbs=get;list;watch;create;update;patch;delete
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.

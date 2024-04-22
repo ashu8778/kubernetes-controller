@@ -1,0 +1,15 @@
+apiVersion: mygroup.my.domain/v1
+kind: MyCrd
+metadata:
+  labels:
+    app.kubernetes.io/name: kubernetes-controller-2
+    app.kubernetes.io/managed-by: kustomize
+  name: mycrd-sample
+spec:
+  podName: my-pod
+  imageName: nginx
+  podNamespace: default
+  podCount: 2
+
+
+

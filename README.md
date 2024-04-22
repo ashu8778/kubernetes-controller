@@ -1,8 +1,23 @@
-# kubernetes-controller-2
-// TODO(user): Add simple overview of use/purpose
+# kubernetes-controller
+This Kubernetes controller watches for MyCrd type resource creation, whenever the resource is created, corresponding pods are created based on the specs of MyCrd.
 
 ## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+This controller creates a Crd as MyCrd. 
+MyCrd resource has properties:
+```
+spec:
+  podName: my-pod
+  imageName: nginx
+  podNamespace: default
+  podCount: 2
+```
+
+- The above parameters are used by the controller reconciler to create pods with parameters `podName: my-pod`, `imageName: nginx`, and in namespace `podNamespace: default`, the count of pods is defined by `podCount: 2`.
+- The pods created will have a naming convention `<podName>-0`, `<podName>-1` and so on.
+- If pods are already existing in given namespace, pods will not be created.
+- If the pods are deleted, reconciler will recreate them.
+- Reconciler has a requeue duration of 2sec. Reconcilation takes 2sec.
+
 
 ## Getting Started
 
@@ -88,9 +103,6 @@ Users can just run kubectl apply -f <URL for YAML BUNDLE> to install the project
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/<org>/kubernetes-controller-2/<tag or branch>/dist/install.yaml
 ```
-
-## Contributing
-// TODO(user): Add detailed information on how you would like others to contribute to this project
 
 **NOTE:** Run `make help` for more information on all potential `make` targets
 

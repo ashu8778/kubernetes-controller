@@ -16,7 +16,7 @@ spec:
 - The pods created will have a naming convention `<podName>-0`, `<podName>-1` and so on.
 - If pods are already existing in given namespace, pods will not be created.
 - If the pods are deleted, reconciler will recreate them.
-- Reconciler has a requeue duration of 2sec. Reconcilation takes 2sec.
+- Reconciler has a requeue duration of 2sec. Reconcilation takes 3sec.
 
 
 ## Getting Started

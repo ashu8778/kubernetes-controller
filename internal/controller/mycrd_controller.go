@@ -23,6 +23,7 @@ import (
 
 	mygroupv1 "github.com/ashu8778/kubernetes-controller/api/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -55,25 +56,53 @@ func (r *MyCrdReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	_ = log.FromContext(ctx)
 
 	myCrdResource := &mygroupv1.MyCrd{}
+
+	// Check if new MyCrd resource exists
 	err := r.Get(ctx, req.NamespacedName, myCrdResource)
-	if err != nil {
-		fmt.Println("Error while fetching crd")
-		return ctrl.Result{}, err
+	// If the resource is not found/deleted
+	if errors.IsNotFound(err) {
+		fmt.Println("Resource not found.")
+		return ctrl.Result{Requeue: true, RequeueAfter: 3 * time.Second}, nil
+	} else if err != nil {
+		// All other errors
+		retry := 3
+		fmt.Println("Cannot get crd. retrying...")
+		if retry > 0 {
+			retry--
+			return ctrl.Result{}, err
+		} else {
+			return ctrl.Result{Requeue: true, RequeueAfter: 3 * time.Second}, nil
+		}
+
 	}
 
+	// If no errors - Get MyCrd resource returns no error. Proceed to create dependent resource
 	for idx := 0; idx < myCrdResource.Spec.PodCount; idx++ {
+		// Dependent resource properties
 		newPodName := fmt.Sprintf("%v-%v", myCrdResource.Spec.PodName, idx)
 		newPodNamespace := myCrdResource.Spec.PodNamespace
 		newPodImage := myCrdResource.Spec.ImageName
 
+		// Check if dependent resource already exists.
 		err = r.Get(ctx, types.NamespacedName{Name: newPodName, Namespace: newPodNamespace}, &corev1.Pod{})
+		if err == nil {
+			fmt.Printf("%v exists in %v namespace. It will not be created...\n", newPodName, newPodNamespace)
+			return ctrl.Result{Requeue: true, RequeueAfter: 3 * time.Second}, nil
+		}
 		if err != nil {
 			fmt.Printf("%v does not exist in %v namespace. It will be created...\n", newPodName, newPodNamespace)
+			// Added owner reference on dependent resource
+			blockOwnerDeletion := true
+			fmt.Printf("owner ref is ....... %+v=\n", []metav1.OwnerReference{
+				{APIVersion: myCrdResource.APIVersion, Kind: myCrdResource.Kind, Name: myCrdResource.Name, BlockOwnerDeletion: &blockOwnerDeletion, UID: myCrdResource.UID},
+			})
 			pod := &corev1.Pod{
-
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      newPodName,
 					Namespace: newPodNamespace,
+					OwnerReferences: []metav1.OwnerReference{
+						{APIVersion: myCrdResource.APIVersion, Kind: myCrdResource.Kind, Name: myCrdResource.Name, BlockOwnerDeletion: &blockOwnerDeletion, UID: myCrdResource.UID},
+					},
 				},
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{
@@ -94,8 +123,6 @@ func (r *MyCrdReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 				fmt.Println("Pod created.")
 			}
 
-		} else {
-			fmt.Printf("%v already exists in the %v namespace.\n", newPodName, newPodNamespace)
 		}
 	}
 

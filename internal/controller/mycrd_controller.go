@@ -160,11 +160,9 @@ func (r *MyCrdReconciler) createPods(ctx context.Context, myCrdResource *mygroup
 	if myCrdResource.Status.AvailablePods == myCrdResource.Spec.PodCount {
 		// Check if no spec conditions
 		if myCrdResource.Status.Conditions == nil {
-			fmt.Println("Inside first if 1")
 			myCrdResource.Status.Conditions = append(myCrdResource.Status.Conditions, mygroupv1.MyCrdCondition{Status: "Success"})
 		} else {
 			if myCrdResource.Status.Conditions[len(myCrdResource.Status.Conditions)-1].Status != "Success" {
-				fmt.Println("Inside second if 1")
 				// Change status to Success
 				myCrdResource.Status.Conditions = append(myCrdResource.Status.Conditions, mygroupv1.MyCrdCondition{Status: "Success"})
 			}
@@ -173,11 +171,9 @@ func (r *MyCrdReconciler) createPods(ctx context.Context, myCrdResource *mygroup
 	} else {
 		// Status is pending if desired state is not reached
 		if myCrdResource.Status.Conditions == nil {
-			fmt.Println("Inside first if 2")
 			myCrdResource.Status.Conditions = append(myCrdResource.Status.Conditions, mygroupv1.MyCrdCondition{Status: "Pending"})
 		} else {
 			if myCrdResource.Status.Conditions[len(myCrdResource.Status.Conditions)-1].Status != "Pending" {
-				fmt.Println("Inside second if 2")
 				// Change status to Pending
 				myCrdResource.Status.Conditions = append(myCrdResource.Status.Conditions, mygroupv1.MyCrdCondition{Status: "Pending"})
 			}

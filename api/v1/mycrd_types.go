@@ -29,16 +29,24 @@ type MyCrdSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of MyCrd. Edit mycrd_types.go to remove/update
-	PodName      string `json:"podName,omitempty"`
-	ImageName    string `json:"imageName,omitempty"`
+	PodName      string `json:"podName"`
+	ImageName    string `json:"imageName"`
 	PodNamespace string `json:"podNamespace,omitempty"`
-	PodCount     int    `json:"podCount,omitempty"`
+	PodCount     int    `json:"podCount"`
 }
 
 // MyCrdStatus defines the observed state of MyCrd
 type MyCrdStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+	Conditions    []MyCrdCondition `json:"conditions,omitempty"`
+	AvailablePods int              `json:"availablePods,omitempty"`
+}
+
+// MyCrdCondition represents a condition of the MyCrd
+type MyCrdCondition struct {
+	Status string `json:"state,omitempty"`
+	Reason string `json:"reason,omitempty"`
 }
 
 //+kubebuilder:object:root=true

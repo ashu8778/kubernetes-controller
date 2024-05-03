@@ -25,6 +25,11 @@ spec:
     - state: Pending
 ```
 - MyCrd resource keeps the status of the pods created. If the availablePods are less than desired, state will be `Pending`.
+```
+NAME            STATUS
+mycrd-sample    Success
+mycrd-sample2   Pending
+```
 
 ## Getting Started
 

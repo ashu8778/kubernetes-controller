@@ -51,6 +51,7 @@ type MyCrdCondition struct {
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="Status",type=string,JSONPath=`.status.conditions[-1].state`
 
 // MyCrd is the Schema for the mycrds API
 type MyCrd struct {

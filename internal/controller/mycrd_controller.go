@@ -52,12 +52,14 @@ type MyCrdReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.17.2/pkg/reconcile
 func (r *MyCrdReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+	fmt.Println("-----")
 	// log := log.FromContext(ctx)
 	// log.Info("Reconciliation triggered for resource", "Name", req.Name, "Namespace", req.Namespace)
 
 	myCrdResource := &mygroupv1.MyCrd{}
 
-	fmt.Printf("NamespacedName is : %+v\n", req.NamespacedName)
+	fmt.Printf("%v, namespace=%v\n", req.Name, req.Namespace)
+
 	// Check if new MyCrd resource exists
 
 	err := r.Get(ctx, req.NamespacedName, myCrdResource)
@@ -193,7 +195,7 @@ func (r *MyCrdReconciler) isOwner(myCrdResource *mygroupv1.MyCrd, pod *corev1.Po
 	} else {
 		for _, podOwnerRef := range pod.ObjectMeta.OwnerReferences {
 			if podOwnerRef.UID == myCrdResource.ObjectMeta.UID {
-				fmt.Println("Pod is owned by MyCrd.")
+				// fmt.Println("Pod is owned by MyCrd.")
 				return true
 			}
 		}

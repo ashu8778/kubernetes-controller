@@ -15,12 +15,6 @@ spec:
 - The above parameters are used by the controller reconciler to create pods with parameters `podName: my-pod`, `imageName: nginx`, and in namespace `podNamespace: default`, the count of pods is defined by `podCount: 2`.
 - The pods created will have a naming convention `<podName>-0`, `<podName>-1` and so on.
 - If pods are already existing in given namespace, pods will not be created.
-  ```
-  status:
-    availablePods: 1
-    conditions:
-    - state: Pending
-  ```
 - If the pods are deleted, reconciler will recreate them.
 - Reconciler has a requeue duration of 8sec. Reconcilation takes 8sec.
 
@@ -30,6 +24,12 @@ spec:
 NAME            STATUS
 mycrd-sample    Success
 mycrd-sample2   Pending
+```
+```
+status:
+  availablePods: 1
+  conditions:
+  - state: Pending
 ```
 
 ## Getting Started
